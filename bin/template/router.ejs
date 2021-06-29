@@ -1,0 +1,249 @@
+const router = require('koa-router')({
+  prefix: '/base'
+})
+<% if (mongodb) { %>
+  const mongoose = require('mongoose')
+
+  const {isEmptyObject, formatFilter, formatProjection} = require('../utils')
+<% } %>
+
+router.get('/test', async ctx => {
+  ctx.body = {
+      code: 0,
+      msg: '请求成功'
+  }
+})
+
+<% if (mongodb) { %>
+  // 插入
+router.post('/insert_one', async ctx => {
+  let params = ctx.request.body
+
+  // 从参数中获取表名cname和字段doc
+  let cname = params.cname
+  let doc = params.doc
+
+  if(typeof doc !== 'object') {
+      ctx.body = {
+          code: 1,
+          error: "doc不是对象"
+      }
+      return ;
+  }
+
+  let Any = new mongoose.Schema({ mixed : {} }, { collection: cname, versionKey: false });
+  if(!mongoose.models[cname]) {   // model不能重复声明
+      // 该model不存在，新建
+      var insertModel = mongoose.model(cname, Any)
+  } else {
+      // model已存在，读取
+      var insertModel = mongoose.models[cname]
+  }
+  let m = new insertModel;
+  m.mixed = doc;
+  m.markModified('mixed');
+  await m.save()
+
+  console.log('插入成功')
+  ctx.body = {
+      code: 0
+  }
+})
+
+// 查询(分页、过滤、筛选返回字段)
+router.post('/find_all', async ctx => {
+  let params = ctx.request.body
+
+  let cname = params.cname
+
+  let filter = isEmptyObject(params.filter) ? {} : formatFilter(params.filter)
+
+  let projection = params.projection ? formatProjection(params.projection) : ''
+
+  // 分页(页码，条数)，不传返回全部
+  let skip = (params.page_num - 1) * params.page_size || 0
+  let limt = params.page_size || 0
+
+  var Any = new mongoose.Schema({ mixed : {} }, { collection: cname, versionKey: false });
+  if(!mongoose.models[cname]) {
+      var selectModel = mongoose.model(cname, Any)
+  } else {
+      var selectModel = mongoose.models[cname]
+  }
+  // {'mixed.age': 20}, 'mixed.name mixed.age'
+  let list = await selectModel.find(filter, projection).skip(skip).limit(limt)
+  // 总条数
+  let count = await selectModel.find().countDocuments()
+
+  if(list) {
+      let resArr = []
+      list.forEach(item => {
+          let _id = item._id
+          let doc = item.mixed
+          if(doc) {
+              item = {
+                  _id,
+                  ...doc
+              }
+              resArr.push(item)
+          }else {
+              resArr.push(item)
+          }
+      })
+      ctx.body = {
+          code: 0,
+          data: {
+              doc_list: resArr,
+              total_count: count
+          }
+      }
+  } else {
+      ctx.body = {
+          code: 0,
+          data: {
+              doc_list: [],
+              total_count: 0
+          }
+      }
+  }
+})
+
+// ID查询
+router.post('/find_one', async ctx => {
+  let params = ctx.request.body
+
+  let cname = params.cname
+  let _id = params._id
+
+  if(!_id) {
+      ctx.body = {
+          code: 1,
+          error: "_id为空"
+      }
+      return ;
+  }
+
+  var Any = new mongoose.Schema({ mixed : mongoose.Schema.Types.Mixed }, { collection: cname, versionKey: false });
+  if(!mongoose.models[cname]) {
+      var selectModel = mongoose.model(cname, Any)
+  } else {
+      var selectModel = mongoose.models[cname]
+  }
+  let list = await selectModel.findById(_id)
+
+  if(list) {
+      ctx.body = {
+          code: 0,
+          data: {
+              doc_list: {
+                  "_id": list._id,
+                  ...(list.mixed)
+              }
+          }
+      }
+  } else {
+      ctx.body = {
+          code: 0,
+          data: {
+              doc_list: {}
+          }
+      }
+  }
+})
+
+// 删除一个
+router.post('/delete_one', async ctx => {
+  let params = ctx.request.body
+
+  let cname = params.cname
+  let _id = params._id
+
+  if(!_id) {
+      ctx.body = {
+          code: 1,
+          error: "_id为空"
+      }
+      return ;
+  }
+
+  var Any = new mongoose.Schema({ mixed : mongoose.Schema.Types.Mixed }, { collection: cname, versionKey: false });
+  if(!mongoose.models[cname]) {
+      var selectModel = mongoose.model(cname, Any)
+  } else {
+      var selectModel = mongoose.models[cname]
+  }
+  let list = await selectModel.deleteOne({_id})
+
+  if(list) {
+      ctx.body = {
+          code: 0,
+          data: {}
+      }
+  }
+})
+
+// 删除表中全部
+router.post('/delete_all', async ctx => {
+  let params = ctx.request.body
+
+  let cname = params.cname
+
+  var Any = new mongoose.Schema({ mixed : mongoose.Schema.Types.Mixed }, { collection: cname, versionKey: false });
+  if(!mongoose.models[cname]) {
+      var selectModel = mongoose.model(cname, Any)
+  } else {
+      var selectModel = mongoose.models[cname]
+  }
+  let list = await selectModel.deleteMany({})
+
+  if(list) {
+      ctx.body = {
+          code: 0,
+          data: {}
+      }
+  }
+})
+
+// 更新数据
+router.post('/replace_one', async ctx => {
+  let params = ctx.request.body
+
+  // 从参数中获取表名cname和字段doc以及_id
+  let cname = params.cname
+  let doc = params.doc
+  let _id = params._id
+
+  if(!_id) {
+      ctx.body = {
+          code: 1,
+          error: "_id为空"
+      }
+      return ;
+  }
+
+  if(typeof doc !== 'object') {
+      ctx.body = {
+          code: 1,
+          error: "doc不是对象"
+      }
+      return ;
+  }
+
+  var Any = new mongoose.Schema({ mixed : mongoose.Schema.Types.Mixed }, { collection: cname, versionKey: false });
+  if(!mongoose.models[cname]) {
+      var selectModel = mongoose.model(cname, Any)
+  } else {
+      var selectModel = mongoose.models[cname]
+  }
+  let list = await selectModel.replaceOne({_id}, {"mixed" : doc})
+
+  if(list) {
+      ctx.body = {
+          code: 0,
+          data: {}
+      }
+  }
+})
+<% } %>
+
+module.exports = router

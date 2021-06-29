@@ -1,0 +1,32 @@
+function isEmptyObject(obj) {
+  if(JSON.stringify(obj) === '{}') {
+      return true
+  }
+  return false
+}
+
+function formatFilter(filter) {
+  // filter: {name: 'daw', age: 20} to {mixed.name: 'daw', mixed.age: 20}
+  let resObj = {}
+  for(let prop in filter) {
+      let spellStr = `mixed.${prop}`
+      resObj[spellStr] = filter[prop]
+  }
+  return resObj
+}
+
+function formatProjection(projection) {
+  // projection: 'name age' to 'mixed.name mixed.age'
+  projection = projection.split(' ')
+  for(let i = 0; i < projection.length; i++) {
+      projection[i] = `mixed.${projection[i]}`
+  }
+  return projection.join(' ')
+}
+
+
+module.exports = {
+  isEmptyObject,
+  formatFilter,
+  formatProjection
+}

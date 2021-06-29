@@ -1,0 +1,34 @@
+const Koa = require('koa')
+
+<% if (mongodb) { %>
+  // mongoose
+  const mongoose = require('mongoose')
+<% } %>
+  
+  const config = require('./config')
+<% if (router) { %>
+  // router 
+  const bodyParser = require('koa-bodyparser')
+  const baseRouter = require('./routers/rbase')
+<% } %>
+
+
+const app = new Koa()
+
+<% if (router) { %>
+  app.use(bodyParser())
+  app.use(baseRouter.routes(), baseRouter.allowedMethods())
+<% } %>
+
+
+<% if (mongodb) { %>
+  // connect mongodb
+  mongoose.connect(config.mongodb_address, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+<% } %>
+
+app.listen(<%= port %>, () => {
+    console.log(`koaServer listen to port <%= port %>...`)
+})

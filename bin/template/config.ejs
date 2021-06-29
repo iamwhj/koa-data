@@ -1,0 +1,7 @@
+module.exports = {
+  port: <%= port %>
+  <% if (mongodb) { %>
+    // mongodb数据库地址，test数据库名，可自行更改
+    ,mongodb_address: "mongodb://localhost:27017/test" 
+  <% } %>
+}

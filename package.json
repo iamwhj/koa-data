@@ -6,8 +6,10 @@
   "bin": "./bin/index.js",
   "files": [
     "bin",
+    "static",
     "package.json",
-    "static"
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "start": "nodemon ./bin/index.js",

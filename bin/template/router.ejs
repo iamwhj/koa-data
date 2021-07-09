@@ -10,12 +10,12 @@ const router = require('koa-router')({
 router.get('/test', async ctx => {
   ctx.body = {
       code: 0,
-      msg: '请求成功'
+      msg: 'request success!'
   }
 })
 
 <% if (mongodb) { %>
-  // 插入
+  // insert
 router.post('/insert_one', async ctx => {
   let params = ctx.request.body
 
@@ -44,7 +44,7 @@ router.post('/insert_one', async ctx => {
   m.markModified('mixed');
   await m.save()
 
-  console.log('插入成功')
+  console.log('insert success')
   ctx.body = {
       code: 0
   }

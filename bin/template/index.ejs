@@ -12,6 +12,11 @@ const Koa = require('koa')
   const baseRouter = require('./routers/rbase')
 <% } %>
 
+<% if (panel) { %>
+  const path = require('path')
+  const serve = require('koa-static')
+<% } %>
+
 
 const app = new Koa()
 
@@ -20,6 +25,11 @@ const app = new Koa()
   app.use(baseRouter.routes(), baseRouter.allowedMethods())
 <% } %>
 
+<% if (panel) { %>
+  app.use(serve(path.join(__dirname, 'static'), {
+    maxAge: 365 * 24 * 60 * 60
+  }))
+<% } %>
 
 <% if (mongodb) { %>
   // connect mongodb

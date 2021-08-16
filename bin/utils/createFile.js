@@ -26,7 +26,7 @@ function crateFile(rootPath, options) {
     fs.mkdirSync(rootPath + '/routers')
     fs.writeFileSync(rootPath + '/routers' + '/rbase.js', formatCode(createRouter(options)))
   }
-  if(mongodb) {
+  if (mongodb) {
     // utils folder
     fs.mkdirSync(rootPath + '/utils')
     fs.writeFileSync(rootPath + '/utils' + '/index.js', formatCode(createUtils(options)))

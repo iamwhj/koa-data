@@ -20,18 +20,20 @@
 ### 项目启动和配置
 
 - 进入生成的项目目录，执行命令 node index.js  
-> **<font color="red">注意</font>**：若想使用mongodb调试接口，请确保环境已安装**mongodb**。  
+> **注意**：若想使用mongodb调试接口，请确保环境已安装**mongodb**。  
 > config文件是配置文件(默认mogondb端口：27017，数据库：test)，可以根据需求自行修改。
 
 
 ### 接口使用和调试
 
-
-- 项目启动后，可以调用基础的路由测试接口验证，地址：http://localhost:3000/base/test
+- 项目启动后，可以调用基础的测试接口验证，地址：http://localhost:3000/base/test
 
 
 #### **mongodb操作接口**：
-默认地址：http://localhost:3000，使用时用地址拼上路由，如插入接口：http://localhost:3000/base/insert_one
+默认地址：http://localhost:3000  
+
+使用时用地址拼上路由，如插入接口：http://localhost:3000/base/insert_one
+
 ```js
 // 插入 /base/insert_one
 {

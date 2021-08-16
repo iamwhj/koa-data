@@ -78,14 +78,23 @@
   "projection" : "name password"  // 查询结果只返回这两字段
 }
 ```
-**当然了查询多条数据的接口条件时可选的，可以不填或选填，具体看下面的图**
+**当然了查询多条数据的接口条件时可选的，可以不填或选填，如下即是返回所有**
+```json
+{
+  "cname" : "user"
+}
+```
+<!-- ![过滤分页数据](http://image.dawsky.vip:8081/image/upload_2f06ca93853e7dd4e6a977cd1ccbfff6.jpg) -->
 
-![过滤分页数据](http://image.dawsky.vip:8081/image/upload_2f06ca93853e7dd4e6a977cd1ccbfff6.jpg)
+<!-- **不限定条件，返回所有表中数据** -->
 
-**不限定条件，返回所有表中数据**
+<!-- ![查询全部数据](http://image.dawsky.vip:8081/image/upload_77bacead4d2d4d8fbe063174142a268e.jpg) -->
 
-![查询全部数据](http://image.dawsky.vip:8081/image/upload_77bacead4d2d4d8fbe063174142a268e.jpg)
+### 新增调试页面
 
+勾选上dataPanel选项时，即可点击下面地址打开。
+
+http://localhost:3000
 
 ### **最后**
 

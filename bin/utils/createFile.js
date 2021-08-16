@@ -6,11 +6,13 @@ const createConfig = require('./createTemplate/createConfigTemplate.js')
 const createRouter = require('./createTemplate/createRouterTemplate.js')
 const createUtils = require('./createTemplate/createUtilsTemplate.js')
 
+const fse = require('fs-extra')
+const path = require('path')
 
 const formatCode = (code, format="babel") => prettier.format(code, { parser: format });
 
 function crateFile(rootPath, options) {
-  const { router, mongodb } = options
+  const { router, mongodb, panel } = options
   // 创建根文件夹
   fs.mkdirSync(rootPath)
   
@@ -31,7 +33,10 @@ function crateFile(rootPath, options) {
     fs.mkdirSync(rootPath + '/utils')
     fs.writeFileSync(rootPath + '/utils' + '/index.js', formatCode(createUtils(options)))
   }
-
+  if (panel) {
+    fse.copy(path.resolve(__dirname, '../../static'), rootPath + '/static')
+  }
+  
   // 3. 创建 package.json
   fs.writeFileSync(rootPath + '/package.json', formatCode(createPackage(options), 'json'))
 }
